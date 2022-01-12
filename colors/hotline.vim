@@ -3,7 +3,7 @@
 " URL:          https://github.com/epmor/hotline-vim
 " License:      MIT
 " Created:      June 23rd 2021
-" Modified:     Sept 1st  2021
+" Modified:     Jan  12th 2022 [Jason Stewart <support@eggplantsd.com>]
 "
 " Colorscheme initialization "{{{
 " ----------------------------------------------------------------------
@@ -34,26 +34,34 @@ let s:base14 = ['#ff5f00', '202']
 let s:base15 = ['#ff0087', '198']
 let s:base16 = ['#000000', '0']
 let s:base17 = ['#121212', '0']
+
+let s:yello  = ['#fce94f', '11']
+let s:barney = ['#9300ad', '93']
+let s:tiffblue = ['#85fff5', '123']
+
 "}}}
 " Highlight function "{{{
 " ----------------------------------------------------------------------
 function! <SID>X(group, fg, bg, attr)
+
+	let l_hc = ['highlight', a:group]
+
   if !empty(a:fg)
-    let l:f = ' guifg=' . a:fg[0] . ' ctermfg=' . a:fg[1]
-  else
-    let l:f = ' guifg=NONE  ctermfg=NONE'
+		let l_hc = l_hc + ['guifg=' . a:fg[0], 'ctermfg=' . a:fg[1]]
   endif
+
   if !empty(a:bg)
-    let l:b = ' guibg=' . a:bg[0] . ' ctermbg=' . a:bg[1]
-  else
-    let l:b = ' guibg=NONE  ctermbg=NONE'
+		let l_hc = l_hc + ['guibg=' . a:bg[0], 'ctermbg=' . a:bg[1]]
+	else
+		let l_hc = l_hc + ['guibg=NONE', 'ctermbg=NONE']
   endif
+
   if !empty(a:attr)
-    let l:a = ' gui=' . a:attr . ' cterm=' . a:attr
-  else
-    let l:a = ' gui=NONE  cterm=NONE'
+		let l_hc = l_hc + ['gui=' . a:attr, 'cterm=' . a:attr]
   endif
-  exec 'highlight ' . a:group . l:f . l:b . l:a
+
+	exec join(l_hc, ' ')
+
 endfunction
 "}}}
 " Highlight link function "{{{
@@ -103,7 +111,9 @@ call <SID>X('IncSearch',      '',       '',       'underline')
 call <SID>X('Include',        s:base15, '',       '')
 call <SID>X('Keyword',        s:base15, '',       'bold')
 call <SID>X('Label',          s:base02, '',       '')
-call <SID>X('LineNr',         s:base15, '',       '')
+call <SID>X('LineNrAbove',    s:barney, '',       '')
+call <SID>X('LineNr',         s:base13, '',       'bold')
+call <SID>X('LineNrBelow',    s:base15, '',       '')
 call <SID>X('Macro',          s:base11, '',       '')
 call <SID>X('MatchParen',     '',       s:base01, '')
 call <SID>X('ModeMsg',        s:base11, '',       '')
@@ -113,7 +123,8 @@ call <SID>X('NonText',        s:base01, '',       '')
 call <SID>X('Normal',         s:base05, s:base16, '')
 call <SID>X('Number',         s:base08, '',       '')
 call <SID>X('NvimSpacing',    s:base01, '',       '')
-call <SID>X('Operator',       s:base15, '',       '')
+call <SID>X('Operator',        s:yello, '',       '')
+"call <SID>X('Operator',       s:base15, '',       '')
 call <SID>X('PMenu',          s:base03, s:base16, '')
 call <SID>X('PMenuSel',       s:base00, s:base09, '')
 call <SID>X('PMenuSbar',      '',       s:base01, '')
@@ -135,7 +146,7 @@ call <SID>X('SpellRare',      '',       s:base01, '')
 call <SID>X('StatusLine',     '',       s:base01, '')
 call <SID>X('Statement',      s:base10, '',       '')
 call <SID>X('StorageClass',   s:base03, '',       '')
-call <SID>X('String',         s:base11, '',       '')
+call <SID>X('String',         s:tiffblue, '',       '')
 call <SID>X('Structure',      s:base09, '',       '')
 call <SID>X('TabLine',        s:base03, s:base02, '')
 call <SID>X('TabLineFill',    s:base11, s:base01, '')
@@ -146,7 +157,7 @@ call <SID>X('Title',          s:base08, '',       '')
 call <SID>X('Todo',           s:base09, '',       '')
 call <SID>X('Type',           s:base09, '',       '')
 call <SID>X('Typedef',        s:base09, '',       '')
-call <SID>X('VertSplit',      s:base16, s:base16, '')
+call <SID>X('VertSplit',      s:base10, s:base16, 'bold')
 call <SID>X('StatusLineNC',   s:base15, s:base16, '')
 call <SID>X('Visual',         s:base00, s:base09, '')
 call <SID>X('Underlined',     s:base12, '',       '')
@@ -494,4 +505,15 @@ call <SID>X('xmlAttrib',  s:base08, '',       '')
 call <SID>X('xmlEqual',   s:base15, '',       '')
 "}}}
 "
+" PARENS "{{{
+function! s:HotParens()
+	hi HotlineParens guifg=#ff7f90 gui=bold cterm=bold
+	match HotlineParens '[(){}\[\]]'
+endfunction
+call s:HotParens()
+augroup Hotline2
+	autocmd!
+	autocmd WinEnter * call s:HotParens()
+augroup END
+"}}}
 " vim:fdm=marker:foldlevel=0
